@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import API from '../api/axios';
 import { PlusCircle, Plane, Trash2, Users } from "lucide-react";
 
 const AdminDashboard = () => {
@@ -22,14 +22,14 @@ const AdminDashboard = () => {
 	}, []);
 
 	const fetchFlights = async () => {
-		const res = await axios.get("http://localhost:5000/flights");
+		const res = await API.get("/flights");
 		setFlights(res.data);
 	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			await axios.post("http://localhost:5000/flights/add", formData, {
+			await API.post("/flights/add", formData, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 			alert("Flight Added Successfully!");
@@ -46,7 +46,7 @@ const AdminDashboard = () => {
 
 			try {
 				const token = localStorage.getItem("token");
-				await axios.delete(`http://localhost:5000/flights/${id}`, {
+				await API.delete(`/flights/${id}`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 

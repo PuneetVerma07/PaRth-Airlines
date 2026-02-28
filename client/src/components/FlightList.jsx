@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import API from "../api/axios";
 import { PlaneTakeoff, IndianRupee, Clock, Armchair } from "lucide-react";
 
 const FlightList = ({ flights }) => {
@@ -15,8 +15,8 @@ const FlightList = ({ flights }) => {
 			// Random seat number for now as per synopsis scope
 			const seatNumber = "S" + Math.floor(Math.random() * 60);
 
-			const res = await axios.post(
-				"http://localhost:5000/bookings/book",
+			const res = await API.post(
+				"/bookings/book",
 				{ flightId, seatNumber },
 				config,
 			);

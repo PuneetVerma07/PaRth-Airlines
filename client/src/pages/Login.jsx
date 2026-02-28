@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import axios from "axios";
+import API from '../api/axios';
 import { useNavigate } from "react-router-dom";
 import { LogIn } from "lucide-react";
 import { AuthContext } from "../context/AuthContext"; // Context import karein
@@ -14,8 +14,8 @@ const Login = () => {
 		e.preventDefault();
 		try {
 			// Backend API call with /api prefix [cite: 92]
-			const res = await axios.post(
-				"http://localhost:5000/auth/login",
+			const res = await API.post(
+				"/auth/login",
 				formData,
 			);
 

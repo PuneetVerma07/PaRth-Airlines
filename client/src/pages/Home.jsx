@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../api/axios";
 import Hero from "../components/Hero";
 import FlightList from "../components/FlightList";
 
@@ -13,8 +13,8 @@ const Home = () => {
 		try {
 			// Backend query: /api/flights?source=Delhi&destination=Mumbai
 			const { from, to } = searchParams;
-			const res = await axios.get(
-				`http://localhost:5000/flights?source=${from}&destination=${to}`,
+			const res = await API.get(
+				`/flights?source=${from}&destination=${to}`,
 			);
 			setFlights(res.data);
 		} catch (err) {
