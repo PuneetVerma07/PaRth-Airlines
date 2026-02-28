@@ -1,51 +1,59 @@
 import React, { useState, useEffect } from "react";
-import API from "../api/axios";
 import Hero from "../components/Hero";
-import FlightList from "../components/FlightList";
+import API from "../api/axios"; // Hamara naya Axios Instance
+import FlightCard from "../components/FlightCard"; // Flight display ke liye
 
 const Home = () => {
 	const [flights, setFlights] = useState([]);
 	const [loading, setLoading] = useState(false);
 
-	// Function jo Hero component se data receive karega
-	const fetchFilteredFlights = async (searchParams) => {
+	// Initial load: Kuch flights pehle se dikhane ke liye
+	useEffect(() => {
+		fetchFlights();
+	}, []);
+
+	const fetchFlights = async (searchParams = {}) => {
 		setLoading(true);
 		try {
-			// Backend query: /api/flights?source=Delhi&destination=Mumbai
-			const { from, to } = searchParams;
-			const res = await API.get(
-				`/flights?source=${from}&destination=${to}`,
-			);
+			// Agar searchParams hain (from, to, date), toh query string banegi
+			// e.g., /flights?source=Delhi&destination=Mumbai
+			const { from, to, date } = searchParams;
+			let url = "/flights";
+
+			if (from || to || date) {
+				url += `?source=${from || ""}&destination=${to || ""}&date=${date || ""}`;
+			}
+
+			const res = await API.get(url);
 			setFlights(res.data);
 		} catch (err) {
-			console.error("Error filtering flights", err);
+			console.error("Search failed:", err);
+			// Render "wake up" warning
+			alert("Server is waking up. Please wait 30 seconds and try again.");
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	// Initial load par saari flights dikhane ke liye
-	useEffect(() => {
-		fetchFilteredFlights({ from: "", to: "" });
-	}, []);
-
 	return (
-		<div>
-			<Hero onSearch={fetchFilteredFlights} />
-			<div className="max-w-7xl mx-auto py-12 px-4">
-				<h2 className="text-3xl font-bold text-primary mb-8 border-b-2 border-secondary pb-2 w-fit">
-					Available Flights
+		<div className="min-h-screen">
+			{/* Hero component ko fetchFlights function pass kar rahe hain */}
+			<Hero onSearch={(data) => fetchFlights(data)} />
+
+			<div className="container mx-auto py-12 px-4">
+				<h2 className="text-3xl font-bold mb-8 text-center">
+					{loading ? "Searching Best Flights..." : "Available Flights"}
 				</h2>
 
-				{loading ? (
-					<p className="text-center py-10">Searching for best flights...</p>
-				) : flights.length > 0 ? (
-					<FlightList flights={flights} />
+				{flights.length === 0 && !loading ? (
+					<p className="text-center text-gray-500">
+						No flights found for this route.
+					</p>
 				) : (
-					<div className="text-center py-20 bg-white rounded-xl shadow-inner">
-						<p className="text-gray-500 text-xl">
-							No flights found for this route. Try another search!
-						</p>
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+						{flights.map((flight) => (
+							<FlightCard key={flight._id} flight={flight} />
+						))}
 					</div>
 				)}
 			</div>
