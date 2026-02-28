@@ -6,9 +6,22 @@ const bookingRoutes = require("./routes/booking.routes")
 
 const app = express();
 
+const allowedOrigins = [
+    "http://localhost:5173", // for local testing
+    "https://parth-airlines.vercel.app" // frontend url
+]
+
 app.use(cors({
-    origin: ["https://parth-airlines.onrender.com"],
-    credentials: true
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error("Not allowed by CORS"))
+        }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }))
 
 app.use(express.json())
