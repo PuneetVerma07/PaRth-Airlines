@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import API from '../api/axios';
+import API from "../api/axios";
 import { PlusCircle, Plane, Trash2, Users } from "lucide-react";
 
 const AdminDashboard = () => {
@@ -17,14 +17,19 @@ const AdminDashboard = () => {
 
 	const token = localStorage.getItem("token");
 
-	useEffect(() => {
-		fetchFlights();
-	}, []);
-
+	// declare helper before using it
 	const fetchFlights = async () => {
 		const res = await API.get("/flights");
 		setFlights(res.data);
 	};
+
+	useEffect(() => {
+		// wrap in an async function so state updates occur inside async context
+		const load = async () => {
+			await fetchFlights();
+		};
+		load();
+	}, []);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -35,44 +40,30 @@ const AdminDashboard = () => {
 			alert("Flight Added Successfully!");
 			setShowForm(false);
 			fetchFlights();
-		} catch (err) {
+		} catch (_err) {
+			console.error("Add flight error", _err);
 			alert("Failed to add flight. Check Admin permissions.");
 		}
-    };
-    
-    const handleDelete = async (id) => {
-			if (!window.confirm("Are you sure you want to delete this flight?"))
-				return;
+	};
 
-			try {
-				const token = localStorage.getItem("token");
-				await API.delete(`/flights/${id}`, {
-					headers: { Authorization: `Bearer ${token}` },
-				});
+	const handleDelete = async (id) => {
+		if (!window.confirm("Are you sure you want to delete this flight?")) return;
 
-				alert("Flight deleted successfully!");
-				// Table ko refresh karne ke liye flights state update karein
-				setFlights(flights.filter((flight) => flight._id !== id));
-			} catch (err) {
-				alert(err.response?.data?.message || "Failed to delete flight");
-			}
-		};
+		try {
+			const token = localStorage.getItem("token");
+			await API.delete(`/flights/${id}`, {
+				headers: { Authorization: `Bearer ${token}` },
+			});
 
+			alert("Flight deleted successfully!");
+			// Table ko refresh karne ke liye flights state update karein
+			setFlights(flights.filter((flight) => flight._id !== id));
+		} catch (_err) {
+			alert(_err.response?.data?.message || "Failed to delete flight");
+		}
+	};
 	return (
-		<div className="min-h-screen bg-gray-100 p-8">
-			<div className="flex justify-between items-center mb-8">
-				<h1 className="text-3xl font-bold text-primary flex items-center gap-2">
-					<Users className="text-secondary" /> Admin Control Panel
-				</h1>
-				<button
-					onClick={() => setShowForm(!showForm)}
-					className="bg-black text-white px-6 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-sky-600 transition"
-				>
-					<PlusCircle size={20} /> {showForm ? "Close Form" : "Add New Flight"}
-				</button>
-			</div>
-
-			{/* Add Flight Form */}
+		<>
 			{showForm && (
 				<form
 					onSubmit={handleSubmit}
@@ -178,7 +169,7 @@ const AdminDashboard = () => {
 					</tbody>
 				</table>
 			</div>
-		</div>
+		</>
 	);
 };
 

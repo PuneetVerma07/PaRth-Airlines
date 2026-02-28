@@ -47,9 +47,9 @@ const Home = () => {
 		if (!window.confirm("Do you want to confirm this booking?")) return;
 
 		try {
-			// API call to book the flight
-			// Humara Axios Instance automatically Bearer Token handle karega
-			const res = await API.post("/bookings/book", { flightId });
+			// API call to book the flight; generate random seat number similar to FlightList component
+			const seatNumber = "S" + Math.floor(Math.random() * 60);
+			const res = await API.post("/bookings/book", { flightId, seatNumber });
 
 			if (res.status === 201 || res.status === 200) {
 				alert(

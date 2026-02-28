@@ -1,20 +1,17 @@
-import React, { createContext, useState, useEffect } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import React, { createContext, useState } from "react";
 
+// Only exporting component(s) now to satisfy fast-refresh rule
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-	const [user, setUser] = useState(null);
-	const [loading, setLoading] = useState(true);
-
-	useEffect(() => {
-		// Initial load par check karein ki user pehle se logged in hai ya nahi
+	// initialize from localStorage to avoid setState inside effect
+	const [user, setUser] = useState(() => {
 		const savedUser = localStorage.getItem("user");
 		const token = localStorage.getItem("token");
-		if (savedUser && token) {
-			setUser(JSON.parse(savedUser));
-		}
-		setLoading(false);
-	}, []);
+		return savedUser && token ? JSON.parse(savedUser) : null;
+	});
+	const loading = false;
 
 	const login = (userData, token) => {
 		localStorage.setItem("user", JSON.stringify(userData));

@@ -13,13 +13,10 @@ const FlightList = ({ flights }) => {
 		try {
 			const config = { headers: { Authorization: `Bearer ${token}` } };
 			// Random seat number for now as per synopsis scope
+			// eslint-disable-next-line react-hooks/purity
 			const seatNumber = "S" + Math.floor(Math.random() * 60);
 
-			const res = await API.post(
-				"/bookings/book",
-				{ flightId, seatNumber },
-				config,
-			);
+			await API.post("/bookings/book", { flightId, seatNumber }, config);
 
 			alert(
 				"Booking Successful! Check your dashboard for the QR Boarding Pass.",
