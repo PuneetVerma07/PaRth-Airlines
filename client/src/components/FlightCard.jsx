@@ -10,7 +10,7 @@ const FlightCard = ({ flight, onBook }) => {
 		source,
 		destination,
 		departureTime,
-		seatsAvailable,
+		seatsAvailability,
 		price,
 	} = flight;
 
@@ -53,7 +53,8 @@ const FlightCard = ({ flight, onBook }) => {
 				<div className="flex items-center gap-3 text-sm text-gray-600">
 					<Users size={16} className="text-secondary" />
 					<span>
-						Seats Available: <span className="font-bold">{seatsAvailable}</span>
+						Seats Available:{" "}
+						<span className="font-bold">{seatsAvailability}</span>
 					</span>
 				</div>
 			</div>
