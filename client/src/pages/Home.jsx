@@ -35,6 +35,39 @@ const Home = () => {
 		}
 	};
 
+	const handleBooking = async (flightId) => {
+		// Pehle check karein ki user logged in hai ya nahi
+		const token = localStorage.getItem("token");
+		if (!token) {
+			alert("Please login to book a flight!");
+			window.location.href = "/login"; // Redirect to login
+			return;
+		}
+
+		if (!window.confirm("Do you want to confirm this booking?")) return;
+
+		try {
+			// API call to book the flight
+			// Humara Axios Instance automatically Bearer Token handle karega
+			const res = await API.post("/bookings/book", { flightId });
+
+			if (res.status === 201 || res.status === 200) {
+				alert(
+					"🎉 Booking Successful! You can view your QR Boarding Pass in the Dashboard.",
+				);
+
+				// Seat count update karne ke liye flights dobara fetch karein
+				fetchFlights();
+			}
+		} catch (err) {
+			console.error("Booking Error:", err);
+			// Error handling for cases like 'No seats available'
+			alert(
+				err.response?.data?.message || "Something went wrong during booking.",
+			);
+		}
+	};
+
 	return (
 		<div className="min-h-screen">
 			{/* Hero component ko fetchFlights function pass kar rahe hain */}
@@ -52,7 +85,11 @@ const Home = () => {
 				) : (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 						{flights.map((flight) => (
-							<FlightCard key={flight._id} flight={flight} />
+							<FlightCard
+								key={flight._id}
+								flight={flight}
+								onBook={(id) => handleBooking(id)}
+							/>
 						))}
 					</div>
 				)}
