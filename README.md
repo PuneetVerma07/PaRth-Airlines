@@ -99,6 +99,6 @@ Open `http://localhost:5173` (default Vite port) to view the app.
 Built by **Puneet Verma**
 
 - GitHub: [@PuneetVerma_7](https://github.com/PuneetVerma_7)
-- LinkedIn: [Puneet Verma](https://www.linkedin.com/in/puneet-verma-XXXX/)
+- LinkedIn: [Puneet Verma](https://www.linkedin.com/in/puneetdotio/)
 
 Feel free to open issues or submit pull requests!
